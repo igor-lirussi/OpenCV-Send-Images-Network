@@ -1,3 +1,4 @@
+# reads the stream from raw_stream_server and process it with OpenCV
 import cv2
 import urllib.request
 import numpy as np

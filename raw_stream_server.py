@@ -1,4 +1,4 @@
-# Allows multiple connections, can be seen by the browser or by opencv_read_raw_stream
+# Allows multiple connections, can be seen by the browser or by raw_stream_client, but not with a normal capture
 # Serve the image as HTTP in MIME multipart JPG format and each image replaces the previous
 import socket 
 import cv2
@@ -84,7 +84,7 @@ def main():
 
 	try:
 		server = ThreadedHTTPServer(('', PORT), CamHandler)
-		print("server started. Call /exit to quit")
+		print("server started. Call http://{}:{}/exit to QUIT".format(IPAddr, PORT))
 		server.serve_forever()
 		
 	except KeyboardInterrupt:
