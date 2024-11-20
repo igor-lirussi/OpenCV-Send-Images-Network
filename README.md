@@ -9,11 +9,12 @@ The server does _not require extra packages_ installation (like Flask) and it's 
 
 ### Advantages:
 - no extra packages needed
-- python 2 compatible
+- python 2/3 compatible
 - image stream can be captured directly with OpenCV cap.read() method.
+- low latency, good for real-time
 
 ### Used:
-- Python 2
+- Python 2 / 3
 - OpenCV 3.4.5
 
 ### Files: 

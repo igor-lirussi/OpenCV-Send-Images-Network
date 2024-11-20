@@ -2,6 +2,13 @@ import socket
 import threading
 import time
 
+# Ensure compatibility for Python 2 and 3
+import sys
+if sys.version_info[0] < 3:  # Python 2
+    to_bytes = lambda s: s  # Strings are already bytes in Python 2
+else:  # Python 3
+    to_bytes = lambda s: s.encode('utf-8')  # Convert strings to bytes in Python 3
+
 
 PORT=8080
 
@@ -39,6 +46,17 @@ class MJpegHttpStreamer:
         self.running = False
         self.worker_thread = None
 
+    def get_local_ip(self):
+        try:
+            # Create a UDP socket and connect to a public server
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))  # Google's public DNS
+            ip_address = s.getsockname()[0]  # Get the local IP
+            s.close()
+            return ip_address
+        except Exception as e:
+            return "Error: Unable to determine IP address. {}".format(e)
+
     def start(self):
         if self.running:
             raise Exception("MJpegHttpStreamer already in execution")
@@ -46,8 +64,8 @@ class MJpegHttpStreamer:
         self.worker_thread = threading.Thread(target=self.worker_run)
         self.worker_thread.start()
         print("Streaming started")
-        print("Connect on: http://127.0.0.1:"+str(PORT))
-        print("Or connect on: http://<ip_address>:"+str(PORT))
+        print("On this device connect on: http://127.0.0.1:"+str(PORT))
+        print("Or connect on the same network on: http://{}:{}".format(self.get_local_ip(), PORT))
 
     def stop(self):
         if not self.running:
@@ -105,9 +123,11 @@ class MJpegHttpStreamer:
                             length = self.length_b
                             timestamp = self.timestamp_b
                         self.new_jpeg = False
-                    client_socket.send("Content-type: image/jpeg\r\nContent-Length: "+str(length)+"\r\nX-Timestamp: "+str(timestamp)+"\r\n\r\n".encode())
-                    client_socket.send(buffer[:length])
-                    client_socket.send(BOUNDARY_LINES.encode())
+                    headers = "Content-type: image/jpeg\r\nContent-Length: {}\r\nX-Timestamp: {}\r\n\r\n".format(length, timestamp)
+                    # Send data
+                    client_socket.send(to_bytes(headers))  # Convert headers to bytes if needed
+                    client_socket.send(buffer[:length])  # Send the JPEG buffer
+                    client_socket.send(to_bytes(BOUNDARY_LINES))  # Convert boundary lines to bytes if needed
             except Exception as e:
                 print("Error during streaming"+str(e))
             finally:
@@ -119,7 +139,6 @@ import cv2
 import time
 
 import signal
-import sys
 # Handle graceful shutdown with Ctrl+C
 def signal_handler(sig, frame):
     print("\nShutting down gracefully...")
