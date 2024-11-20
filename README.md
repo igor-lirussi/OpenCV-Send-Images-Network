@@ -18,10 +18,14 @@ The server does _not require extra packages_ installation (like Flask) and it's 
 - OpenCV 3.4.5
 
 ### Files: 
-- OpenCV_MJPEG_Streaming_Server: pure server that streams video/images (i.e. from webcam), only 1 client.
+- MJpegHttpStreamer: pure server that streams video/images (i.e. from webcam), only 1 client.
+- OpenCV_MJPEG_Streaming_Server: Server example that streams the webcam.
 - OpenCV_read_source_from_argument_client: Client example that reads the images/video streamed on another device.
 - raw_stream_client_read_opencv: Server that can handle multiple clients, but the format can't be captured with OpenCV cap.read() method, but with the client below.
 - raw_stream_server: Client for the server above, can decode the stream.
+- robot_baxter_stream_pic: an example of mine for a Baxter Robot
+
+> If any problem or unstable connection, try shaping your frames in (480,640,3) datatype: uint8, before encoding them in .jpg .
 
 ### Other useful resources:
 
