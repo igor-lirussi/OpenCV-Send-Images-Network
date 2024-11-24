@@ -1,5 +1,5 @@
 # OpenCV-Send-Images-Network
-Some experiments to send and receive images / stream video through network with low latency for external computation.
+Send and receive images / stream video through network with low latency for external computation.
 
 Image/Video streamed can be seen with browser in another device, or captured with OpenCV for further computation. 
 
